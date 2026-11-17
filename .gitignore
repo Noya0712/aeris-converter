@@ -15,6 +15,7 @@ auth.json
 /public/hot
 /public/storage
 /public/ffmpeg-mt
+/dist
 
 # Laravel Runtime Cache, Sessions, Views & Logs
 /bootstrap/cache/*.php

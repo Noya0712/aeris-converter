@@ -3,7 +3,8 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "build:static": "vite build --config vite.static.config.js"
     },
     "dependencies": {
         "@ffmpeg/core": "^0.12.6",
