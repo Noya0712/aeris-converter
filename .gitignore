@@ -1,0 +1,46 @@
+# Environment & Secrets (JANGAN PERNAH di-upload ke GitHub)
+.env
+.env.backup
+.env.production
+.env.*.php
+/storage/*.key
+auth.json
+
+# Dependencies (di-install ulang via composer install & npm install)
+/vendor
+/node_modules
+
+# Vite & Frontend Build Artifacts
+/public/build
+/public/hot
+/public/storage
+/public/ffmpeg-mt
+
+# Laravel Runtime Cache, Sessions, Views & Logs
+/bootstrap/cache/*.php
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/testing/*
+/storage/framework/views/*
+/storage/logs/*
+/storage/app/public/*
+
+# Local Database
+/database/*.sqlite
+/database/*.sqlite-journal
+
+# Testing & Debug Logs
+/.phpunit.cache
+.phpunit.result.cache
+npm-debug.log
+yarn-error.log
+
+# Internal Audit & Unused Root Design Assets (public/aeris_logo.png tetap di-track)
+OWASP-Security-Audit-Report.md
+
+# IDE & OS Files
+/.fleet
+/.idea
+/.vscode
+.DS_Store
+Thumbs.db
