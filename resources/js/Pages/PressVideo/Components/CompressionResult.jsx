@@ -1,19 +1,23 @@
 import React from 'react';
 
-
 export default function CompressionResult({
+    mediaType = 'video',
     videoFile,
     compressedUrl,
     compressedSizeBytes,
+    outputExtension = 'mp4',
     videoResolution,
-    targetSizeMB,
     onReset,
     formatSizeMB,
 }) {
+    const isImageMode = mediaType === 'image';
+
     const reductionPercentage =
         videoFile && compressedSizeBytes > 0
             ? Math.max(0, Math.round(((videoFile.size - compressedSizeBytes) / videoFile.size) * 100))
             : 0;
+
+    const baseName = videoFile.name.replace(/\.[^/.]+$/, '');
 
     return (
         <div className="rounded-[24px] border-2 border-[#8FB0E6]/85 bg-white/60 dark:bg-white/10 p-5 sm:p-6 space-y-4">
@@ -51,28 +55,38 @@ export default function CompressionResult({
                 </div>
             </div>
 
-            {/* Video Player Preview */}
-            <video
-                src={compressedUrl}
-                controls
-                className="w-full max-h-44 rounded-xl bg-slate-950/90 object-contain"
-            />
+            {/* Preview Hasil (Foto atau Video) */}
+            {isImageMode ? (
+                <div className="w-full rounded-xl bg-slate-950/10 dark:bg-slate-950/60 p-2 flex items-center justify-center overflow-hidden">
+                    <img
+                        src={compressedUrl}
+                        alt="Pratinjau Hasil Kompresi Foto"
+                        className="max-h-48 w-auto rounded-lg object-contain"
+                    />
+                </div>
+            ) : (
+                <video
+                    src={compressedUrl}
+                    controls
+                    className="w-full max-h-44 rounded-xl bg-slate-950/90 object-contain"
+                />
+            )}
 
             {/* Tombol Unduh & Reset */}
             <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
                 <a
                     href={compressedUrl}
-                    download={`AERIS_Compressed_${videoFile.name.replace(/\.[^/.]+$/, '')}.mp4`}
+                    download={`AERIS_Compressed_${baseName}.${outputExtension}`}
                     className="flex-1 py-3 px-5 rounded-full bg-gradient-to-r from-[#0989FF] via-[#246BFD] to-[#6D38FF] text-white font-bold text-sm text-center shadow-[0_10px_24px_rgba(36,107,253,0.45)] hover:opacity-95 transition-all"
                 >
-                    Unduh Video ({formatSizeMB(compressedSizeBytes)})
+                    Unduh {isImageMode ? 'Foto' : 'Video'} ({formatSizeMB(compressedSizeBytes)})
                 </a>
                 <button
                     type="button"
                     onClick={onReset}
                     className="py-3 px-5 rounded-full bg-white/85 dark:bg-white/15 text-[#101943] dark:text-white font-bold text-sm border border-white hover:bg-white transition-all"
                 >
-                    Kompres Video Lain
+                    Kompres {isImageMode ? 'Foto' : 'Video'} Lain
                 </button>
             </div>
         </div>

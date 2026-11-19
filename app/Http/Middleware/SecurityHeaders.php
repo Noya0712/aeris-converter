@@ -19,19 +19,25 @@ class SecurityHeaders
 
         $isLocalDev = app()->isLocal() && file_exists(public_path('hot'));
 
+        // Pada mode dev lokal (npm run dev), Vite memakai IPv6 [::1]:5173 yang sering ditolak parser host CSP browser.
+        // Di produksi (tanpa public/hot atau APP_ENV=production), CSP ketat tetap 100% aktif.
         $scriptSrc = $isLocalDev
-            ? "'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: http://127.0.0.1:5173 http://localhost:5173"
+            ? "'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: http: https:"
             : "'self' 'wasm-unsafe-eval' blob:";
 
+        $styleSrc = $isLocalDev
+            ? "'self' 'unsafe-inline' http: https:"
+            : "'self' 'unsafe-inline' https://fonts.googleapis.com";
+
         $connectSrc = $isLocalDev
-            ? "'self' blob: http://127.0.0.1:5173 http://localhost:5173 ws://127.0.0.1:5173 ws://localhost:5173"
+            ? "'self' blob: http: https: ws: wss:"
             : "'self' blob:";
 
         $cspDirectives = [
             "default-src 'self'",
             "script-src {$scriptSrc}",
             "worker-src 'self' blob:",
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+            "style-src {$styleSrc}",
             "font-src 'self' https://fonts.gstatic.com data:",
             "img-src 'self' data: blob:",
             "media-src 'self' blob:",

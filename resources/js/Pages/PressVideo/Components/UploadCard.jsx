@@ -5,6 +5,7 @@ import CompressionResult from './CompressionResult';
 
 export default function UploadCard({ darkMode, compressor }) {
     const {
+        mediaType,
         videoFile,
         videoDuration,
         videoResolution,
@@ -16,9 +17,11 @@ export default function UploadCard({ darkMode, compressor }) {
         errorMessage,
         compressedUrl,
         compressedSizeBytes,
+        outputExtension,
         targetSizeMB,
         fileInputRef,
         uploadCardRef,
+        switchMediaType,
         setIsDragging,
         handleFileSelect,
         startCompression,
@@ -26,6 +29,8 @@ export default function UploadCard({ darkMode, compressor }) {
         formatSizeMB,
         formatDuration,
     } = compressor;
+
+    const isImageMode = mediaType === 'image';
 
     const onInputChange = (e) => {
         const selected = e.target.files?.[0];
@@ -61,22 +66,19 @@ export default function UploadCard({ darkMode, compressor }) {
                     className={`pointer-events-none absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent opacity-95`}
                 />
 
-                {/* Efek Kilau Bintang 4-Sudut Dekoratif (Persis sampel.png) */}
+                {/* Efek Kilau Bintang 4-Sudut Dekoratif */}
                 <div className="pointer-events-none absolute top-3 left-1/2 -translate-x-1/2 w-64 h-32 select-none">
-                    {/* Bintang Kanan Atas */}
                     <svg className="animate-aeris-twinkle absolute top-0 right-3 w-5 h-5 text-white drop-shadow-[0_0_8px_rgba(255,255,255,1)]" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 0C12.6 6.6 17.4 11.4 24 12C17.4 12.6 12.6 17.4 12 24C11.4 17.4 6.6 12.6 0 12C6.6 11.4 11.4 6.6 12 0Z" />
                     </svg>
-                    {/* Bintang Kiri Tengah */}
                     <svg className="animate-aeris-twinkle absolute top-6 left-4 w-3.5 h-3.5 text-white/90 drop-shadow-[0_0_6px_rgba(255,255,255,0.9)]" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 0C12.6 6.6 17.4 11.4 24 12C17.4 12.6 12.6 17.4 12 24C11.4 17.4 6.6 12.6 0 12C6.6 11.4 11.4 6.6 12 0Z" />
                     </svg>
-                    {/* Titik Cahaya Halus */}
                     <span className="absolute bottom-3 left-6 w-2 h-2 rounded-full bg-white/90 shadow-[0_0_8px_#fff]" />
                     <span className="absolute top-12 right-1 w-1.5 h-1.5 rounded-full bg-white/90 shadow-[0_0_6px_#fff]" />
                 </div>
 
-                {/* 1. Ilustrasi Clapperboard 3D dengan Ikon Play & Badge Compress */}
+                {/* 1. Ilustrasi Clapperboard / Foto 3D dengan Badge Compress */}
                 <div className="animate-aeris-float relative mx-auto w-32 h-28 flex items-center justify-center mb-2 select-none">
                     <div className="absolute inset-0 rounded-full bg-[#246BFD]/25 blur-2xl" />
                     <svg
@@ -103,10 +105,20 @@ export default function UploadCard({ darkMode, compressor }) {
                             strokeOpacity="0.65"
                             strokeWidth="1.5"
                         />
-                        <path
-                            d="M54 44.5C53.8 43.1 55.3 42.1 56.5 42.8L71.2 50.8C72.4 51.5 72.5 53.2 71.4 54.0L58.4 63.6C57.2 64.5 55.6 63.7 55.4 62.3L54 44.5Z"
-                            fill="white"
-                        />
+                        {isImageMode ? (
+                            <g transform="rotate(-10 60 55)">
+                                <circle cx="52" cy="46" r="5" fill="white" />
+                                <path
+                                    d="M42 66L53 54L61 61L69 51L80 66H42Z"
+                                    fill="white"
+                                />
+                            </g>
+                        ) : (
+                            <path
+                                d="M54 44.5C53.8 43.1 55.3 42.1 56.5 42.8L71.2 50.8C72.4 51.5 72.5 53.2 71.4 54.0L58.4 63.6C57.2 64.5 55.6 63.7 55.4 62.3L54 44.5Z"
+                                fill="white"
+                            />
+                        )}
                         <defs>
                             <linearGradient id="clapperTopGrad" x1="18" y1="12" x2="94" y2="30" gradientUnits="userSpaceOnUse">
                                 <stop stopColor="#6D4AFF" />
@@ -128,10 +140,48 @@ export default function UploadCard({ darkMode, compressor }) {
                     </div>
                 </div>
 
+                {/* Switcher Tab: Kompres Video | Kompres Foto */}
+                <div className="relative z-10 flex justify-center mb-4">
+                    <div
+                        className={`inline-flex p-1 rounded-full backdrop-blur-md border ${
+                            darkMode
+                                ? 'bg-white/10 border-white/20'
+                                : 'bg-white/55 border-white/90 shadow-inner'
+                        }`}
+                    >
+                        <button
+                            type="button"
+                            onClick={() => switchMediaType('video')}
+                            className={`px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all ${
+                                !isImageMode
+                                    ? 'bg-gradient-to-r from-[#0989FF] to-[#246BFD] text-white shadow-[0_4px_12px_rgba(36,107,253,0.4)]'
+                                    : darkMode
+                                    ? 'text-slate-300 hover:text-white'
+                                    : 'text-[#46577F] hover:text-[#101943]'
+                            }`}
+                        >
+                            Kompres Video
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => switchMediaType('image')}
+                            className={`px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all ${
+                                isImageMode
+                                    ? 'bg-gradient-to-r from-[#0989FF] to-[#246BFD] text-white shadow-[0_4px_12px_rgba(36,107,253,0.4)]'
+                                    : darkMode
+                                    ? 'text-slate-300 hover:text-white'
+                                    : 'text-[#46577F] hover:text-[#101943]'
+                            }`}
+                        >
+                            Kompres Foto
+                        </button>
+                    </div>
+                </div>
+
                 {/* 2. Judul & Subjudul Kartu */}
                 <div className="relative z-10 text-center space-y-1.5 mb-6">
                     <h2 className={`text-xl sm:text-2xl font-extrabold tracking-tight ${darkMode ? 'text-white' : 'text-[#101943]'}`}>
-                        Upload Video Anda
+                        {isImageMode ? 'Upload Foto Anda' : 'Upload Video Anda'}
                     </h2>
                     <p className={`text-xs sm:text-sm ${darkMode ? 'text-slate-300' : 'text-[#46577F]'}`}>
                         Seret dan lepas file di sini, atau klik untuk memilih file
@@ -142,7 +192,11 @@ export default function UploadCard({ darkMode, compressor }) {
                 <input
                     ref={fileInputRef}
                     type="file"
-                    accept="video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,video/webm,.mp4,.mov,.avi,.mkv,.webm"
+                    accept={
+                        isImageMode
+                            ? 'image/jpeg,image/png,image/webp,image/bmp,.jpg,.jpeg,.png,.webp,.bmp'
+                            : 'video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,video/webm,.mp4,.mov,.avi,.mkv,.webm'
+                    }
                     onChange={onInputChange}
                     className="hidden"
                     id="pressvideo-file-input"
@@ -172,6 +226,7 @@ export default function UploadCard({ darkMode, compressor }) {
                     {(status === 'idle' || status === 'ready' || status === 'error') && (
                         <UploadState
                             darkMode={darkMode}
+                            mediaType={mediaType}
                             status={status}
                             videoFile={videoFile}
                             videoDuration={videoDuration}
@@ -191,6 +246,7 @@ export default function UploadCard({ darkMode, compressor }) {
 
                     {(status === 'loading-engine' || status === 'compressing') && (
                         <CompressionProgress
+                            mediaType={mediaType}
                             status={status}
                             progress={progress}
                             statusMessage={statusMessage}
@@ -200,9 +256,11 @@ export default function UploadCard({ darkMode, compressor }) {
 
                     {status === 'completed' && compressedUrl && videoFile && (
                         <CompressionResult
+                            mediaType={mediaType}
                             videoFile={videoFile}
                             compressedUrl={compressedUrl}
                             compressedSizeBytes={compressedSizeBytes}
+                            outputExtension={outputExtension}
                             videoResolution={videoResolution}
                             targetSizeMB={targetSizeMB}
                             onReset={resetConverter}

@@ -1,13 +1,14 @@
 import React from 'react';
 
-
 export default function CompressionProgress({
+    mediaType = 'video',
     status,
     progress,
     statusMessage,
     videoResolution,
 }) {
     const isEngineLoading = status === 'loading-engine';
+    const isImageMode = mediaType === 'image';
 
     return (
         <div className="rounded-[24px] border-2 border-dashed border-[#8FB0E6]/85 bg-white/55 dark:bg-white/10 p-6 sm:p-7 text-center space-y-4">
@@ -20,7 +21,11 @@ export default function CompressionProgress({
 
             <div>
                 <h3 className="text-base font-bold">
-                    {isEngineLoading ? 'Menyiapkan video...' : 'Memproses Kompresi Video...'}
+                    {isEngineLoading
+                        ? 'Menyiapkan video...'
+                        : isImageMode
+                        ? 'Memproses Kompresi Foto...'
+                        : 'Memproses Kompresi Video...'}
                 </h3>
                 <p className="text-xs text-[#46577F] dark:text-slate-300 mt-1">
                     {statusMessage}

@@ -2,12 +2,12 @@ import React from 'react';
 
 export default function UploadState({
     darkMode,
+    mediaType = 'video',
     status,
     videoFile,
     videoDuration,
     videoResolution,
     calculatedBitrate,
-    targetSizeMB,
     isDragging,
     setIsDragging,
     fileInputRef,
@@ -17,6 +17,8 @@ export default function UploadState({
     formatSizeMB,
     formatDuration,
 }) {
+    const isImageMode = mediaType === 'image';
+
     const onDragOver = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -39,12 +41,14 @@ export default function UploadState({
 
     // State 2: File sudah dipilih dan siap dikompresi
     if (status === 'ready' && videoFile) {
+        const fileExt = videoFile.name.split('.').pop()?.toUpperCase() || (isImageMode ? 'FOTO' : 'VIDEO');
+
         return (
             <div className="rounded-[24px] border-2 border-dashed border-[#8FB0E6]/80 bg-white/30 dark:bg-white/10 backdrop-blur-md shadow-[inset_0_2px_6px_rgba(255,255,255,0.75)] p-5 sm:p-6 space-y-4">
                 <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                         <p className="text-xs font-bold uppercase tracking-wider text-[#176BFF]">
-                            Video Siap Dikompresi
+                            {isImageMode ? 'Foto Siap Dikompresi' : 'Video Siap Dikompresi'}
                         </p>
                         <h3 className="text-sm sm:text-base font-bold truncate mt-0.5">
                             {videoFile.name}
@@ -59,7 +63,7 @@ export default function UploadState({
                     </button>
                 </div>
 
-                {/* Grid Informasi File Video */}
+                {/* Grid Informasi File */}
                 <div className="grid grid-cols-3 gap-2.5 text-center">
                     <div className="p-2.5 rounded-xl bg-white/55 dark:bg-white/10 backdrop-blur-sm border border-white/80">
                         <span className="block text-[11px] text-[#46577F] dark:text-slate-300">Ukuran Awal</span>
@@ -68,9 +72,11 @@ export default function UploadState({
                         </span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-white/55 dark:bg-white/10 backdrop-blur-sm border border-white/80">
-                        <span className="block text-[11px] text-[#46577F] dark:text-slate-300">Durasi</span>
+                        <span className="block text-[11px] text-[#46577F] dark:text-slate-300">
+                            {isImageMode ? 'Format' : 'Durasi'}
+                        </span>
                         <span className="text-xs sm:text-sm font-extrabold text-[#101943] dark:text-white">
-                            {formatDuration(videoDuration)}
+                            {isImageMode ? fileExt : formatDuration(videoDuration)}
                         </span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-white/55 dark:bg-white/10 backdrop-blur-sm border border-white/80">
@@ -82,10 +88,21 @@ export default function UploadState({
                 </div>
 
                 <div className="text-xs text-[#46577F] dark:text-slate-300 flex items-center justify-between bg-white/45 dark:bg-blue-950/40 backdrop-blur-sm px-3.5 py-2 rounded-xl border border-white/80">
-                    <span>
-                        Dynamic Bitrate: <strong>{calculatedBitrate} kbps</strong> (Video) + <strong>128 kbps</strong> (AAC)
-                    </span>
-                    <span className="font-semibold text-[#176BFF]">Resolusi Asli 100%</span>
+                    {isImageMode ? (
+                        <>
+                            <span>
+                                Mode: <strong>High-Clarity Perceptual</strong> (Tanpa Buram)
+                            </span>
+                            <span className="font-semibold text-[#176BFF]">Resolusi Asli 100%</span>
+                        </>
+                    ) : (
+                        <>
+                            <span>
+                                Dynamic Bitrate: <strong>{calculatedBitrate} kbps</strong> (Video) + <strong>128 kbps</strong> (AAC)
+                            </span>
+                            <span className="font-semibold text-[#176BFF]">Resolusi Asli 100%</span>
+                        </>
+                    )}
                 </div>
 
                 <button
@@ -99,7 +116,7 @@ export default function UploadState({
         );
     }
 
-    // State 1: Dropzone Kosong (Efek Kaca Transparan Halus sesuai sampel.png)
+    // State 1: Dropzone Kosong
     return (
         <div
             role="button"
@@ -156,7 +173,9 @@ export default function UploadState({
 
             {/* Informasi Format & Ukuran Tidak Terbatas */}
             <p className={`text-xs sm:text-[13px] font-medium ${darkMode ? 'text-slate-300' : 'text-[#46577F]'}`}>
-                Format: MP4, MOV, AVI, MKV, dll. &nbsp;&bull;&nbsp; Ukuran file: Tidak terbatas
+                {isImageMode
+                    ? 'Format: JPG, JPEG, PNG, WEBP, dll.  •  Ukuran file: Tidak terbatas'
+                    : 'Format: MP4, MOV, AVI, MKV, dll.  •  Ukuran file: Tidak terbatas'}
             </p>
         </div>
     );
